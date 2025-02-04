@@ -27,8 +27,20 @@ BR-SRV - hostnamectl set-hostname BR-SRV.au-team.irpo; exec bash
 HQ-CLI - hostnamectl set-hostname HQ-CLI.au-team.irpo; exec bash
 ```
 ### Назначение IP:
-
 ISP
 ```
 ip -c a
+mkdir /etc/net/ifaces/ens34
+mkdir /etc/net/ifaces/ens35
+vim /etc/net/ifaces/ens34/options
+TYPE=eth
+DISABLED=no
+NM_CONTROLLED=no
+BOOTPROTO=static
+CONFIG_IPv4=yes
+выйти и сохранить запись в vim :wq
+cp /etc/net/ifaces/ens34/options /etc/net/ifaces/ens35
+echo 172.16.4.1/28 > /etc/net/ifaces/ens34/ipv4address
+echo 172.16.5.1/28 > /etc/net/ifaces/ens35/ipv4address
+systemctl restart network
 ```
