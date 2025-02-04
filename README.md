@@ -64,9 +64,11 @@ no boot a-image active
 no boot a-image stable
 перезагружаем машину
 ```
+```
 Включение - en
 Вход в конфигурационный режим - conf t
 Просмотр портов - do sh port br
+```
 ```
 Создание интерфейса и назначение ему IP
 int TO-ISP
