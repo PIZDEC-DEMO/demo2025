@@ -17,8 +17,18 @@
 | HQ-SRV         | ens192    | 192.168.0.2 | 255.255.255.192 | 192.168.0.1 |      
 | HQ-CLI         | ens192    | DHCP        | 255.255.255.240 | 192.168.0.65|      
 | BR-SRV         | ens192    | 192.168.1.2 | 255.255.255.224 | 192.168.1.1 |
+### Выдача имени устройству:
+```
+ISP - hostnamectl set-hostname ISP; exec bash
+HQ-RTR - hostname HQ-RTR
+BR-RTR - hostname BR-RTR
+HQ-SRV - hostnamectl set-hostname HQ-SRV.au-team.irpo; exec bash
+BR-SRV - hostnamectl set-hostname BR-SRV.au-team.irpo; exec bash
+HQ-CLI - hostnamectl set-hostname HQ-CLI.au-team.irpo; exec bash
+```
 ### Назначение IP:
 
 ISP
 ```
 ip -c a
+```
