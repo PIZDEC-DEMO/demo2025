@@ -1,2 +1,1 @@
 # demo2025
-PIZDEC GOVNISHE
