@@ -27,7 +27,7 @@ BR-SRV - hostnamectl set-hostname BR-SRV.au-team.irpo; exec bash
 HQ-CLI - hostnamectl set-hostname HQ-CLI.au-team.irpo; exec bash
 ```
 ### Назначение IP:
-# ISP
+#### ISP
 Просмотр и создание директорий для интерфейсов
 ```
 ip -c a
