@@ -46,3 +46,59 @@ systemctl restart network
 ```
 Проверка:
 <img src="1.jpg" width="500">
+
+HQ-RTR
+```
+en
+no boot b-image active
+no boot b-image stable
+no boot a-image active
+no boot a-image stable
+перезагружаем машину
+en
+conf t
+int TO-ISP
+ip address 172.16.4.2/28
+no shutdown
+ex
+port ge0
+service-instance ge0
+encapsulation default
+ex
+service-instance SI-ISP
+encapsulation untagged
+connect ip interface TO-ISP
+interface HQ-SRV
+ ip mtu 1500
+ ip address 192.168.0.1/26
+!
+interface HQ-CLI
+ ip mtu 1500
+ ip address 192.168.0.65/28
+!
+interface HQ-MGMT
+ ip mtu 1500
+ ip address 192.168.0.81/29
+!
+port te0
+ mtu 9234
+ service-instance te0/vlan100
+  encapsulation dot1q 100
+  rewrite pop 1
+  connect ip interface HQ-SRV
+ service-instance te0/vlan200
+  encapsulation dot1q 200
+  rewrite pop 1
+  connect ip interface HQ-CLI
+ service-instance te0/vlan999
+  encapsulation dot1q 999
+  rewrite pop 1
+  connect ip interface HQ-MGMT
+do wr
+interface tunnel.1
+ ip mtu 1400
+ ip address 172.16.1.1/30
+ ip tunnel 172.16.4.2 172.16.5.2 mode gre
+ip route 0.0.0.0/0 172.16.4.1
+do wr
+```
