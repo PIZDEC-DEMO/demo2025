@@ -43,5 +43,6 @@ cp /etc/net/ifaces/ens34/options /etc/net/ifaces/ens35
 echo 172.16.4.1/28 > /etc/net/ifaces/ens34/ipv4address
 echo 172.16.5.1/28 > /etc/net/ifaces/ens35/ipv4address
 systemctl restart network
-Проверка: 
+Проверка:
+<img src="./demo2025/1.jpg" width="300">
 ```
