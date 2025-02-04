@@ -104,4 +104,4 @@ ip route 0.0.0.0/0 172.16.4.1
 do wr
 ```
 Проверка:
-<img src="1.jpg" width="500">
+<img src="2.jpg" width="500">
