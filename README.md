@@ -28,26 +28,34 @@ HQ-CLI - hostnamectl set-hostname HQ-CLI.au-team.irpo; exec bash
 ```
 ### Назначение IP:
 ISP
+Просмотр и создание директорий для интерфейсов
 ```
 ip -c a
 mkdir /etc/net/ifaces/ens34
 mkdir /etc/net/ifaces/ens35
+```
+Создание настроек для интерфейсов
+```
 vim /etc/net/ifaces/ens34/options
 TYPE=eth
 DISABLED=no
 NM_CONTROLLED=no
 BOOTPROTO=static
 CONFIG_IPv4=yes
-выйти и сохранить запись в vim :wq
+выйти и сохранить изменения в vim :wq
 cp /etc/net/ifaces/ens34/options /etc/net/ifaces/ens35
 echo 172.16.4.1/28 > /etc/net/ifaces/ens34/ipv4address
 echo 172.16.5.1/28 > /etc/net/ifaces/ens35/ipv4address
+```
+Перезагрузка службы network
+```
 systemctl restart network
 ```
 Проверка:
 <img src="1.jpg" width="500">
 
 HQ-RTR
+Выбор заводской прошивки на роутере, чтоб работали порты
 ```
 en
 no boot b-image active
@@ -55,13 +63,19 @@ no boot b-image stable
 no boot a-image active
 no boot a-image stable
 перезагружаем машину
-en
-conf t
-do sh port br
+```
+Включение - en
+Вход в конфигурационный режим - conf t
+Просмотр портов - do sh port br
+```
+Создание интерфейса и назначение ему IP
 int TO-ISP
 ip address 172.16.4.2/28
 no shutdown
 ex
+```
+Привязка созданного интерфейса к порту
+```
 port ge0
 service-instance ge0
 encapsulation default
@@ -69,6 +83,9 @@ ex
 service-instance SI-ISP
 encapsulation untagged
 connect ip interface TO-ISP
+```
+Создание интерфейсов для VLAN
+```
 interface HQ-SRV
  ip mtu 1500
  ip address 192.168.0.1/26
@@ -81,6 +98,9 @@ interface HQ-MGMT
  ip mtu 1500
  ip address 192.168.0.81/29
 !
+```
+Создание для каждого VLAN своего service-instance
+```
 port te0
  mtu 9234
  service-instance te0/vlan100
@@ -96,10 +116,16 @@ port te0
   rewrite pop 1
   connect ip interface HQ-MGMT
 do wr
+```
+Создание GRE тоннеля
+```
 interface tunnel.1
  ip mtu 1400
  ip address 172.16.1.1/30
  ip tunnel 172.16.4.2 172.16.5.2 mode gre
+```
+Маршрут в сторону ISP
+```
 ip route 0.0.0.0/0 172.16.4.1
 do wr
 ```
