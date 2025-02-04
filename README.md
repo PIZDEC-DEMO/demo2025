@@ -45,4 +45,4 @@ echo 172.16.5.1/28 > /etc/net/ifaces/ens35/ipv4address
 systemctl restart network
 ```
 Проверка:
-<img src="./demo2025/1.jpg" width="300">
+<img src="1.jpg" width="300">
