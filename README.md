@@ -57,6 +57,7 @@ no boot a-image stable
 перезагружаем машину
 en
 conf t
+do sh port br
 int TO-ISP
 ip address 172.16.4.2/28
 no shutdown
@@ -102,3 +103,5 @@ interface tunnel.1
 ip route 0.0.0.0/0 172.16.4.1
 do wr
 ```
+Проверка:
+<img src="1.jpg" width="500">
