@@ -54,7 +54,7 @@ systemctl restart network
 Проверка:
 <img src="1.jpg" width="500">
 
-HQ-RTR
+#### HQ-RTR
 Выбор заводской прошивки на роутере, чтоб работали порты
 ```
 en
