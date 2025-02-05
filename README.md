@@ -73,12 +73,13 @@ no boot a-image stable
 Вход в конфигурационный режим - conf t
 Просмотр портов - do sh port br
 ```
-```
 Создание интерфейса и назначение ему IP
+```
 int TO-ISP
 ip address 172.16.4.2/28
 no shutdown
 ex
+ip name-server "DNS от ISP который в /etc/resolv.conf"
 ```
 Привязка созданного интерфейса к порту
 ```
@@ -146,11 +147,18 @@ ip -c a
 Создание настроек интерфейсов
 ```
 vim /etc/net/ifaces/ens**/options
+возможность делать изменения в vim клавиша I
 TYPE=eth
 DISABLED=no
 NM_CONTROLLED=no
 BOOTPROTO=static
 CONFIG_IPv4=yes
+выйти и сохранить изменения в vim :wq
+```
+```
+vim /etc/resolv.conf
+возможность делать изменения в vim клавиша I
+nameserver "DNS от ISP который в /etc/resolv.conf"
 выйти и сохранить изменения в vim :wq
 ```
 Выдача IP
@@ -164,4 +172,53 @@ echo default via 192.168.0.1 > /etc/net/ifaces/ens**/ipv4route
 Перезагрузка службы network
 ```
 systemctl restart network
+```
+#### BR-RTR
+Выбор заводской прошивки на роутере, чтоб работали порты
+```
+en
+no boot b-image active
+no boot b-image stable
+no boot a-image active
+no boot a-image stable
+перезагружаем машину
+```
+```
+Включение - en
+Вход в конфигурационный режим - conf t
+Просмотр портов - do sh port br
+```
+Создание интерфейса и назначение ему IP
+```
+int TO-ISP
+ip address 172.16.5.2/28
+no shutdown
+int TO-BR
+ip address 192.168.1.1/27
+no shutdown
+```
+Привязка созданных интерфейсов к портам
+```
+port ge0
+service-instance ge0
+encapsulation default
+service-instance SI-ISP
+encapsulation untagged
+connect ip interface TO-ISP
+port te0
+service-instance SI-BR
+encapsulation untagged
+connect ip interface TO-BR
+```
+Создание GRE тоннеля
+```
+interface tunnel.1
+ ip mtu 1400
+ ip address 172.16.1.2/30
+ ip tunnel 172.16.5.2 172.16.4.2 mode gre
+```
+Маршрут в сторону ISP
+```
+ip route 0.0.0.0/0 172.16.5.1
+do wr
 ```
