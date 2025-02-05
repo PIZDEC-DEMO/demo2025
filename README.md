@@ -21,8 +21,8 @@
 ### Выдача имени устройству:
 ```
 ISP - hostnamectl set-hostname ISP; exec bash
-HQ-RTR - hostname HQ-RTR
-BR-RTR - hostname BR-RTR
+HQ-RTR - hostname HQ-RTR.au-team.irpo
+BR-RTR - hostname BR-RTR.au-team.irpo
 HQ-SRV - hostnamectl set-hostname HQ-SRV.au-team.irpo; exec bash
 BR-SRV - hostnamectl set-hostname BR-SRV.au-team.irpo; exec bash
 HQ-CLI - hostnamectl set-hostname HQ-CLI.au-team.irpo; exec bash
@@ -155,6 +155,7 @@ BOOTPROTO=static
 CONFIG_IPv4=yes
 выйти и сохранить изменения в vim :wq
 ```
+Выдача DNS
 ```
 vim /etc/resolv.conf
 возможность делать изменения в vim клавиша I
@@ -221,4 +222,39 @@ interface tunnel.1
 ```
 ip route 0.0.0.0/0 172.16.5.1
 do wr
+```
+#### BR-SRV
+Просмотр интерфейсов
+```
+ip -c a
+```
+Создание настроек интерфейсов
+```
+vim /etc/net/ifaces/ens**/options
+возможность делать изменения в vim клавиша I
+TYPE=eth
+DISABLED=no
+NM_CONTROLLED=no
+BOOTPROTO=static
+CONFIG_IPv4=yes
+выйти и сохранить изменения в vim :wq
+```
+Выдача DNS
+```
+vim /etc/resolv.conf
+возможность делать изменения в vim клавиша I
+nameserver "DNS от ISP который в /etc/resolv.conf"
+выйти и сохранить изменения в vim :wq
+```
+Выдача IP
+```
+echo 192.168.1.2/27 > /etc/net/ifaces/ens**/ipv4address
+```
+Выдача шлюза
+```
+echo default via 192.168.1.1 > /etc/net/ifaces/ens**/ipv4route
+```
+Перезагрузка службы network
+```
+systemctl restart network
 ```
