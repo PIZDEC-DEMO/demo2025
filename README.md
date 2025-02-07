@@ -51,6 +51,10 @@ cp /etc/net/ifaces/ens34/options /etc/net/ifaces/ens**
 echo 172.16.4.1/28 > /etc/net/ifaces/ens**/ipv4address
 echo 172.16.5.1/28 > /etc/net/ifaces/ens**/ipv4address
 ```
+включение forwarding, в строке net.ipv4.ip_forward поменять 0 на 1
+```
+vim /etc/net/sysctl.conf
+```
 Перезагрузка службы network
 ```
 systemctl restart network
@@ -170,6 +174,10 @@ echo 192.168.0.2/26 > /etc/net/ifaces/ens**/ipv4address
 ```
 echo default via 192.168.0.1 > /etc/net/ifaces/ens**/ipv4route
 ```
+включение forwarding, в строке net.ipv4.ip_forward поменять 0 на 1
+```
+vim /etc/net/sysctl.conf
+```
 Перезагрузка службы network
 ```
 systemctl restart network
@@ -254,7 +262,127 @@ echo 192.168.1.2/27 > /etc/net/ifaces/ens**/ipv4address
 ```
 echo default via 192.168.1.1 > /etc/net/ifaces/ens**/ipv4route
 ```
+включение forwarding, в строке net.ipv4.ip_forward поменять 0 на 1
+```
+vim /etc/net/sysctl.conf
+```
 Перезагрузка службы network
 ```
 systemctl restart network
+```
+### Настройка NAT
+Обновление и установка iptables
+```
+apt-get update
+apt-get install iptables
+```
+#### ISP
+```
+iptables -t nat -A POSTROUTING -s 172.16.4.0/28 -o ens** -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 172.16.5.0/28 -o ens** -j MASQUERADE
+iptables-save > /etc/sysconfig/iptables
+systemctl restart iptables
+vim /etc/crontab
+@reboot root service iptables start
+```
+#### Настройка на роутерах
+HQ-RTR
+```
+int TO-ISP
+ ip nat outside
+!
+int HQ-SRV
+ ip nat inside
+!
+int HQ-CLI
+ ip nat inside
+!
+int HQ-MGMT
+ ip nat inside
+!
+ip nat pool NAT_POOL 192.168.0.1-192.168.0.254
+!
+ip nat source dynamic inside-to-outside pool NAT_POOL overload interface TO-ISP
+```
+BR-RTR
+```
+int TO-ISP
+ ip nat outside
+!
+int TO-BR
+ ip nat inside
+!
+ip nat pool LOCAL_NET 192.168.1.1-192.168.1.33
+!
+ip nat source dynamic inside-to-outside pool LOCAL_NET overload interface TO-ISP
+```
+### Создание локальных учетных записей
+#### HQ-SRV и BR-SRV
+```
+useradd -m -u 1010 sshuser
+passwd sshuser
+nano /etc/sudoers.d/sshuser
+sshuser ALL=(ALL) NOPASSWD:ALL
+```
+Проверка
+```
+su - sshuser
+sudo whoami
+```
+#### HQ-RTR и BR-RTR
+```
+conf t
+username net_admin
+password P@ssw0rd
+role admin
+do wr
+```
+### Настройка SSH на HQ-SRV и BR-SRV
+Делаем бэкап конфига:
+```
+cp /etc/openssh/sshd_config /etc/openssh/sshd_config.bak
+```
+Редактируем файл конфигурации SSH
+```
+vim /etc/openssh/sshd_config
+```
+Изменяем следующие параметры, раскомменчиваем, если параметр не находится то добавляем
+```
+Port 2024
+MaxAuthTries 3
+Banner /etc/openssh/banner
+AllowUsers sshuser
+```
+Создаем файл с баннером
+```
+WARNING!!!!
+
+AUTHORIZED ACCESS ONLY!!!!
+```
+Перезагружаем SSH
+```
+systemctl restart sshd
+```
+### Настраиваем OSPF
+#### HQ-RTR
+```
+router ospf 1
+ network 172.16.1.0/30 area 0
+ network 192.168.0.0/28 area 0
+!
+interface tunnel.1
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 Demo2025
+ ip ospf network point-to-point
+```
+#### BR-RTR
+```
+router ospf 1
+ network 172.16.1.0/30 area 0
+ network 192.168.1.0/27 area 0
+!
+interface tunnel.1
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 Demo2025
+ ip ospf network point-to-point
 ```
