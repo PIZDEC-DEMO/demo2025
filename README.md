@@ -396,9 +396,9 @@ interface tunnel.1
 ```
 Проверка:
 ```
-sh ip ospf neighbor 
-sh ip ospf interface brief
-sh ip route
+do sh ip ospf neighbor 
+do sh ip ospf interface brief
+do sh ip route
 ```
 ### Настройка DHCP
 #### HQ-RTR
@@ -602,5 +602,5 @@ ntp timezone utc+5
 Проверяем:
 
 ```
-show ntp timezone
+do show ntp timezone
 ```
