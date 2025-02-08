@@ -416,3 +416,11 @@ interface HQ-CLI
 !
 ```
 #### HQ-CLI
+<img src="5.png" width="500">
+<img src="6.png" width="500">
+<img src="7.png" width="500">
+<img src="8.png" width="500">
+```
+Если сработало то в ip -c a будет так
+```
+<img src="9.png" width="500">
