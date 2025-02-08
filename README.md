@@ -27,7 +27,7 @@ HQ-SRV - hostnamectl set-hostname HQ-SRV.au-team.irpo; exec bash
 BR-SRV - hostnamectl set-hostname BR-SRV.au-team.irpo; exec bash
 HQ-CLI - hostnamectl set-hostname HQ-CLI.au-team.irpo; exec bash
 ```
-### Назначение IP:
+### 1 Назначение IP:
 #### ISP
 Просмотр и создание директорий для интерфейсов
 ```
@@ -270,7 +270,7 @@ vim /etc/net/sysctl.conf
 ```
 systemctl restart network
 ```
-### Настройка NAT
+### 2 Настройка NAT
 Обновление и установка iptables
 ```
 apt-get update
@@ -303,6 +303,7 @@ int HQ-MGMT
 ip nat pool NAT_POOL 192.168.0.1-192.168.0.254
 !
 ip nat source dynamic inside-to-outside pool NAT_POOL overload interface TO-ISP
+do wr
 ```
 BR-RTR
 ```
@@ -315,13 +316,14 @@ int TO-BR
 ip nat pool LOCAL_NET 192.168.1.1-192.168.1.30
 !
 ip nat source dynamic inside-to-outside pool LOCAL_NET overload interface TO-ISP
+do wr
 ```
 Проверка, должен пинговаться DNS от ISP:
 ```
 do ping 'DNS от ISP'
 Прекратить пинговать сочетание клавиш Ctrl+C
 ```
-### Создание локальных учетных записей
+### 3 Создание локальных учетных записей
 #### HQ-SRV и BR-SRV
 ```
 useradd -m -u 1010 sshuser
@@ -342,7 +344,7 @@ password P@ssw0rd
 role admin
 do wr
 ```
-### Настройка SSH на HQ-SRV и BR-SRV
+### 4 Настройка SSH на HQ-SRV и BR-SRV
 Делаем бэкап конфига:
 ```
 cp /etc/openssh/sshd_config /etc/openssh/sshd_config.bak
@@ -371,7 +373,7 @@ AUTHORIZED ACCESS ONLY!!!!
 ```
 systemctl restart sshd
 ```
-### Настраиваем OSPF
+### 5 Настраиваем OSPF
 #### HQ-RTR
 ```
 router ospf 1
@@ -382,6 +384,7 @@ interface tunnel.1
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 Demo2025
  ip ospf network point-to-point
+do wr
 ```
 #### BR-RTR
 ```
@@ -393,6 +396,7 @@ interface tunnel.1
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 Demo2025
  ip ospf network point-to-point
+do wr
 ```
 Проверка:
 ```
@@ -400,7 +404,7 @@ do sh ip ospf neighbor
 do sh ip ospf interface brief
 do sh ip route
 ```
-### Настройка DHCP
+### 6 Настройка DHCP
 #### HQ-RTR
 ```
 ip pool HQ-NET200 192.168.0.66-192.168.0.70
@@ -417,6 +421,7 @@ dhcp-server 1
 interface HQ-CLI
  dhcp-server 1
 !
+do wr
 ```
 #### HQ-CLI
 <img src="5.png" width="500">
@@ -425,7 +430,7 @@ interface HQ-CLI
 <img src="8.png" width="500">
 Если сработало то в ip -c a будет так
 <img src="9.png" width="500">
-### Настройка DNS с помощью bind
+### 7 Настройка DNS с помощью bind
 #### HQ-SRV
 Устанавливаем bind:
 
@@ -582,7 +587,7 @@ $TTL    1D
 ```
 named-checkconf -z
 ```
-### Настройка часового пояса
+### 8 Настройка часового пояса
 #### HQ-SRV, HQ-CLI, BR-SRV
 
 Проверяем какой часовой пояс установлен
@@ -598,6 +603,7 @@ timedatectl set-timezone Asia/Yekaterinburg
 ```
 conf t
 ntp timezone utc+5
+do wr
 ```
 Проверяем:
 
