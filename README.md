@@ -312,9 +312,14 @@ int TO-ISP
 int TO-BR
  ip nat inside
 !
-ip nat pool LOCAL_NET 192.168.1.1-192.168.1.33
+ip nat pool LOCAL_NET 192.168.1.1-192.168.1.30
 !
 ip nat source dynamic inside-to-outside pool LOCAL_NET overload interface TO-ISP
+```
+Проверка, должен пинговаться DNS от ISP:
+```
+do ping 'DNS от ISP'
+Прекратить пинговать сочетание клавиш Ctrl+C
 ```
 ### Создание локальных учетных записей
 #### HQ-SRV и BR-SRV
@@ -386,3 +391,28 @@ interface tunnel.1
  ip ospf message-digest-key 1 md5 Demo2025
  ip ospf network point-to-point
 ```
+Проверка:
+```
+sh ip ospf neighbor 
+sh ip ospf interface brief
+sh ip route
+```
+### Настройка DHCP
+#### HQ-RTR
+```
+ip pool HQ-NET200 192.168.0.66-192.168.0.70
+!
+dhcp-server 1
+ lease 86400
+ mask 255.255.255.0
+ pool HQ-NET200 1
+  dns 192.168.0.2
+  domain-name au-team.irpo
+  gateway 192.168.0.65
+  mask 255.255.255.240
+!
+interface HQ-CLI
+ dhcp-server 1
+!
+```
+#### HQ-CLI
