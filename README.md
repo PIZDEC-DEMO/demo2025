@@ -330,7 +330,7 @@ do ping 'DNS от ISP'
 ```
 useradd -m -u 1010 sshuser
 passwd sshuser
-nano /etc/sudoers.d/sshuser
+vim /etc/sudoers.d/sshuser
 sshuser ALL=(ALL) NOPASSWD:ALL
 ```
 Проверка
