@@ -406,8 +406,7 @@ do sh ip ospf neighbor
 do sh ip ospf interface brief
 do sh ip route
 ```
-### 6 Настройка DHCP
-#### HQ-RTR
+### 6 Настройка DHCP на HQ-RTR
 ```
 ip pool HQ-NET200 192.168.0.66-192.168.0.70
 !
@@ -432,8 +431,7 @@ do wr
 <img src="8.png" width="500">
 Если сработало то в ip -c a будет так
 <img src="9.png" width="500">
-### 7 Настройка DNS с помощью bind
-#### HQ-SRV
+### 7 Настройка DNS с помощью bind на HQ-SRV
 Устанавливаем bind:
 
 ```
