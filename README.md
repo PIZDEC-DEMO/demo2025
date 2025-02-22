@@ -432,10 +432,8 @@ do wr
 Если сработало то в ip -c a будет так
 <img src="9.png" width="500">
 ### 7 Настройка DNS с помощью bind на HQ-SRV
-```
-хуйня
-```
-Устанавливаем bind:
+
+#### Устанавливаем bind:
 
 ```
 apt-get install bind bind-utils
