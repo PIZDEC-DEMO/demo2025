@@ -206,6 +206,7 @@ no shutdown
 int TO-BR
 ip address 192.168.1.1/27
 no shutdown
+ip name-server "DNS от ISP который в /etc/resolv.conf"
 ```
 Привязка созданных интерфейсов к портам
 ```
