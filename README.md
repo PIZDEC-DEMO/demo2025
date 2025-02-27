@@ -273,13 +273,11 @@ vim /etc/net/sysctl.conf
 systemctl restart network
 ```
 ### 2 Настройка NAT
+#### ISP
 Обновление и установка iptables
 ```
 apt-get update
 apt-get install iptables
-```
-#### ISP
-```
 вместо звездочек пишем интерфейс который выдает интернет
 iptables -t nat -A POSTROUTING -s 172.16.4.0/28 -o ens** -j MASQUERADE
 iptables -t nat -A POSTROUTING -s 172.16.5.0/28 -o ens** -j MASQUERADE
