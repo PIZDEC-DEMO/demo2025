@@ -317,7 +317,7 @@ int TO-BR
 !
 ip nat pool LOCAL_NET 192.168.1.1-192.168.1.30
 !
-ip nat source dynamic inside-to-outside pool LOCAL_NET overload interface TO-ISP
+ip nat source dynamic inside-to-outside pool LOCAL_NET overload interface TE-ISP
 do wr
 ```
 Проверка, должен пинговаться DNS от ISP:
