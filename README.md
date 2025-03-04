@@ -201,7 +201,7 @@ no boot a-image stable
 ```
 Создание интерфейса и назначение ему IP
 ```
-int TO-ISP
+int TE-ISP
 ip address 172.16.5.2/28
 no shutdown
 int TO-BR
@@ -214,9 +214,9 @@ ip name-server "DNS от ISP который в /etc/resolv.conf"
 port ge0
 service-instance ge0
 encapsulation default
-service-instance SI-ISP
+service-instance SE-ISP
 encapsulation untagged
-connect ip interface TO-ISP
+connect ip interface TE-ISP
 port te0
 service-instance SI-BR
 encapsulation untagged
