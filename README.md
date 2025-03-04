@@ -309,7 +309,7 @@ do wr
 ```
 BR-RTR
 ```
-int TO-ISP
+int TE-ISP
  ip nat outside
 !
 int TO-BR
