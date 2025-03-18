@@ -460,6 +460,18 @@ vim /etc/dnsmasq.conf
 vim /etc/hosts
 192.168.0.1   hq-rtr.au-team.irpo
 ```
+HQ-CLI
+```
+Добавляем следующую строку в /etc/hosts после предыдущих записей:
+vim /etc/hosts
+192.168.0.67   hq-cli.au-team.irpo
+```
+BR-SRV
+```
+Добавляем следующую строку в /etc/hosts после предыдущих записей:
+vim /etc/hosts
+192.168.1.2   br-srv.au-team.irpo
+```
 Перезагружаем dnsmasq
 ```
 systemctl restart dnsmasq
