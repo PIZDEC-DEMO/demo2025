@@ -328,7 +328,7 @@ do ping 'DNS от ISP'
 ### 3 Создание локальных учетных записей
 #### HQ-SRV и BR-SRV
 ```
-useradd -m -u 1010 sshuser
+useradd -m -u 1015 sshuser
 passwd sshuser
 vim /etc/sudoers.d/sshuser
 sshuser ALL=(ALL) NOPASSWD:ALL
@@ -342,7 +342,7 @@ sudo whoami
 ```
 conf t
 username net_admin
-password P@ssw0rd
+password P@$$word
 role admin
 do wr
 ```
@@ -358,7 +358,7 @@ vim /etc/openssh/sshd_config
 Изменяем следующие параметры, раскомменчиваем, если параметр не находится то добавляем
 ```
 Port 2024
-MaxAuthTries 3
+MaxAuthTries 2
 Banner /etc/openssh/banner
 AllowUsers sshuser
 ```
