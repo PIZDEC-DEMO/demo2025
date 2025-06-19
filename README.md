@@ -34,7 +34,7 @@
     <td align="center"></td>
   </tr>
   <tr>
-    <td align="center" rowspan="3">HQ-RTR</td>
+    <td align="center" rowspan="4">HQ-RTR</td>
     <td align="center">te0</td>
     <td align="center">172.16.40.2</td>
     <td align="center">/28</td>
