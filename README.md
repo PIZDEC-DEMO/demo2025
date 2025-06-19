@@ -2,30 +2,137 @@
 ## <img src="3.png" width="500">
 ## Модуль 1
 ### Распределение IP:
-| Имя устройства | Интерфейс | IP          | Маска           | Шлюз        |
-| -------------- | --------- | ----------  | --------------- | ----------- |
-| ISP            | gi1/0/1   | DHCP        |                 |             |
-|                | gi1/0/2   | 172.16.5.1  | 255.255.255.240 |             |
-|                | gi1/0/3   | 172.16.4.1  | 255.255.255.240 |             |
-| HQ-RTR         | ge0       | 172.16.4.2  | 255.255.255.240 | 172.16.4.1  |      
-|                | ge1.100   | 192.168.0.1 | 255.255.255.192 |             |      
-|                | ge1.200   | 192.168.0.65| 255.255.255.240 |             |      
-|                | ge1.999   | 192.168.0.81| 255.255.255.248 |             |
-|                | tunnel.1  | 172.16.1.1  | 255.255.255.252 |             |      
-| BR-RTR         | ge0       | 172.16.5.2  | 255.255.255.240 | 172.16.5.1  |      
-|                | te0       | 192.168.1.1 | 255.255.255.224 |             |
-|                | tunnel.1  | 172.16.1.2  | 255.255.255.252 |             |
-| HQ-SRV         | ens33     | 192.168.0.2 | 255.255.255.192 | 192.168.0.1 |      
-| HQ-CLI         | ens192    | DHCP        | 255.255.255.240 | 192.168.0.65|      
-| BR-SRV         | ens192    | 192.168.1.2 | 255.255.255.224 | 192.168.1.1 |
+<table align="center">
+  <tr>
+    <td align="center">Сеть</td>
+    <td align="center">Адрес подсети</td>
+    <td align="center">Пул-адресов</td>
+  </tr>
+  <tr>
+    <td align="center">SRV-Net (VLAN 100)</td>
+    <td align="center">192.168.100.0/26</td>
+    <td align="center">192.168.100.1 - 192.168.100.62</td>
+  </tr>
+  <tr>
+    <td align="center">CLI-Net (VLAN 200)</td>
+    <td align="center">192.168.200.0/28</td>
+    <td align="center">192.168.200.1 - 192.168.200.14</td>
+  </tr>
+  <tr>
+    <td align="center">BR-Net</td>
+    <td align="center">192.168.0.0/27</td>
+    <td align="center">192.168.0.1 - 192.168.0.30</td>
+  </tr>
+  <tr>
+    <td align="center">MGMT (VLAN 999)</td>
+    <td align="center">192.168.99.0/29</td>
+    <td align="center">192.168.99.1 - 192.168.99.6</td>
+  </tr>
+  <tr>
+    <td align="center">ISP-HQ</td>
+    <td align="center">172.16.4.0/28</td>
+    <td align="center">172.16.4.1 - 172.16.4.14</td>
+  </tr>
+  <tr>
+    <td align="center">ISP-BR</td>
+    <td align="center">172.16.5.0/28</td>
+    <td align="center">172.16.5.1 - 172.16.5.14</td>
+  </tr>
+</table>
+<p align="center"><strong>Таблица подсетей</strong></p>
+
+<br/>
+
+<table align="center">
+  <tr>
+    <td align="center">Имя устройства</td>
+    <td align="center">Интерфейс</td>
+    <td align="center">IPv4/IPv6</td>
+    <td align="center" >Маска/Префикс</td>
+    <td align="center">Шлюз</td>
+  </tr>
+  <tr>
+    <td align="center" rowspan="3">ISP</td>
+    <td align="center">ens33</td>
+    <td align="center">10.12.28.5 (DHCP)</td>
+    <td align="center">/24</td>
+    <td align="center">10.12.28.254</td>
+  </tr>
+  <tr>
+    <td align="center">ens34</td>
+    <td align="center">172.16.5.1</td>
+    <td align="center">/28</td>
+    <td align="center"></td>
+  </tr>
+  <tr>
+    <td align="center">ens35</td>
+    <td align="center">172.16.4.1</td>
+    <td align="center">/28</td>
+    <td align="center"></td>
+  </tr>
+  <tr>
+    <td align="center" rowspan="3">HQ-RTR</td>
+    <td align="center">int0</td>
+    <td align="center">172.16.4.2</td>
+    <td align="center">/28</td>
+    <td align="center">172.16.4.1</td>
+  </tr>
+  <tr>
+    <td align="center">int1</td>
+    <td align="center">192.168.100.1</td>
+    <td align="center">/26</td>
+    <td align="center"></td>
+  </tr>
+  <tr>
+    <td align="center">int2</td>
+    <td align="center">192.168.200.1</td>
+    <td align="center">/28</td>
+    <td align="center"></td>
+  </tr>
+  <tr>
+    <td align="center" rowspan="2">BR-RTR</td>
+    <td align="center">int0</td>
+    <td align="center">172.16.5.2</td>
+    <td align="center">/28</td>
+    <td align="center">172.16.5.1</td>
+  </tr>
+  <tr>
+    <td align="center">int1</td>
+    <td align="center">192.168.0.1</td>
+    <td align="center">/27</td>
+    <td align="center"></td>
+  </tr>
+  <tr>
+    <td align="center">HQ-SRV</td>
+    <td align="center">ens33</td>
+    <td align="center">192.168.100.62</td>
+    <td align="center">/26</td>
+    <td align="center">192.168.100.1</td>
+  </tr>
+  <tr>
+    <td align="center">BR-SRV</td>
+    <td align="center">ens33</td>
+    <td align="center">192.168.0.30</td>
+    <td align="center">/27</td>
+    <td align="center">192.168.0.1</td>
+  </tr>
+  <tr>
+    <td align="center">HQ-CLI</td>
+    <td align="center">ens33</td>
+    <td align="center">192.168.200.14</td>
+    <td align="center">/28</td>
+    <td align="center">192.168.200.1</td>
+  </tr>
+</table>
+<p align="center"><strong>Таблица адресации</strong></p>
 ### Выдача имени устройству:
 ```
 ISP - hostnamectl set-hostname ISP; exec bash
-HQ-RTR - hostname HQ-RTR.au-team.irpo
-BR-RTR - hostname BR-RTR.au-team.irpo
-HQ-SRV - hostnamectl set-hostname HQ-SRV.au-team.irpo; exec bash
-BR-SRV - hostnamectl set-hostname BR-SRV.au-team.irpo; exec bash
-HQ-CLI - hostnamectl set-hostname HQ-CLI.au-team.irpo; exec bash
+HQ-RTR - hostname hq-rtr.au-team.irpo
+BR-RTR - hostname br-rtr.au-team.irpo
+HQ-SRV - hostnamectl set-hostname hq-srv.au-team.irpo; exec bash
+BR-SRV - hostnamectl set-hostname br-srv.au-team.irpo; exec bash
+HQ-CLI - hostnamectl set-hostname hq-cli.au-team.irpo; exec bash
 ```
 ### 1 Назначение IP:
 #### ISP
@@ -48,8 +155,8 @@ cp /etc/net/ifaces/ens34/options /etc/net/ifaces/ens**
 ```
 Выдача IP
 ```
-echo 172.16.4.1/28 > /etc/net/ifaces/ens**/ipv4address
-echo 172.16.5.1/28 > /etc/net/ifaces/ens**/ipv4address
+echo 172.16.40.1/28 > /etc/net/ifaces/ens**/ipv4address
+echo 172.16.50.1/28 > /etc/net/ifaces/ens**/ipv4address
 ```
 включение forwarding, в строке net.ipv4.ip_forward поменять 0 на 1
 ```
@@ -63,7 +170,7 @@ systemctl restart network
 <img src="1.jpg" width="500">
 
 #### HQ-RTR
-Выбор заводской прошивки на роутере, чтоб работали порты
+Выбор заводской прошивки на роутере, чтоб работали порты (возможно это уже сделано)
 ```
 en
 no boot b-image active
