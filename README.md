@@ -6,6 +6,7 @@
 **[Модуль 2](https://github.com/PIZDEC-DEMO/demo2025/tree/main/module2)**
 
 
+<img src="100.jpg" width="500">
 #### Немного анекдотов
 
 ```
