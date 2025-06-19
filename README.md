@@ -2,43 +2,6 @@
 ## <img src="3.png" width="500">
 ## Модуль 1
 ### Распределение IP:
-<table align="center">
-  <tr>
-    <td align="center">Сеть</td>
-    <td align="center">Адрес подсети</td>
-    <td align="center">Пул-адресов</td>
-  </tr>
-  <tr>
-    <td align="center">SRV-Net (VLAN 100)</td>
-    <td align="center">192.168.100.0/26</td>
-    <td align="center">192.168.100.1 - 192.168.100.62</td>
-  </tr>
-  <tr>
-    <td align="center">CLI-Net (VLAN 200)</td>
-    <td align="center">192.168.200.0/28</td>
-    <td align="center">192.168.200.1 - 192.168.200.14</td>
-  </tr>
-  <tr>
-    <td align="center">BR-Net</td>
-    <td align="center">192.168.0.0/27</td>
-    <td align="center">192.168.0.1 - 192.168.0.30</td>
-  </tr>
-  <tr>
-    <td align="center">MGMT (VLAN 999)</td>
-    <td align="center">192.168.99.0/29</td>
-    <td align="center">192.168.99.1 - 192.168.99.6</td>
-  </tr>
-  <tr>
-    <td align="center">ISP-HQ</td>
-    <td align="center">172.16.4.0/28</td>
-    <td align="center">172.16.4.1 - 172.16.4.14</td>
-  </tr>
-  <tr>
-    <td align="center">ISP-BR</td>
-    <td align="center">172.16.5.0/28</td>
-    <td align="center">172.16.5.1 - 172.16.5.14</td>
-  </tr>
-</table>
 <p align="center"><strong>Таблица подсетей</strong></p>
 
 <br/>
@@ -53,75 +16,81 @@
   </tr>
   <tr>
     <td align="center" rowspan="3">ISP</td>
-    <td align="center">ens33</td>
-    <td align="center">10.12.28.5 (DHCP)</td>
+    <td align="center">ens**</td>
+    <td align="center">(DHCP)</td>
     <td align="center">/24</td>
-    <td align="center">10.12.28.254</td>
+    <td align="center"></td>
   </tr>
   <tr>
-    <td align="center">ens34</td>
-    <td align="center">172.16.5.1</td>
+    <td align="center">ens**</td>
+    <td align="center">172.16.40.1</td>
     <td align="center">/28</td>
     <td align="center"></td>
   </tr>
   <tr>
-    <td align="center">ens35</td>
-    <td align="center">172.16.4.1</td>
+    <td align="center">ens**</td>
+    <td align="center">172.16.50.1</td>
     <td align="center">/28</td>
     <td align="center"></td>
   </tr>
   <tr>
     <td align="center" rowspan="3">HQ-RTR</td>
-    <td align="center">int0</td>
-    <td align="center">172.16.4.2</td>
+    <td align="center">te0</td>
+    <td align="center">172.16.40.2</td>
     <td align="center">/28</td>
-    <td align="center">172.16.4.1</td>
+    <td align="center">172.16.40.1</td>
   </tr>
   <tr>
-    <td align="center">int1</td>
-    <td align="center">192.168.100.1</td>
-    <td align="center">/26</td>
+    <td align="center">te1(VLAN15)</td>
+    <td align="center">192.168.15.1</td>
+    <td align="center">/27</td>
     <td align="center"></td>
   </tr>
   <tr>
-    <td align="center">int2</td>
-    <td align="center">192.168.200.1</td>
+    <td align="center">te1(VLAN25)</td>
+    <td align="center">192.168.25.1</td>
     <td align="center">/28</td>
+    <td align="center"></td>
+  </tr>
+  <tr>
+    <td align="center">te1(VLAN99)</td>
+    <td align="center">192.168.99.1</td>
+    <td align="center">/29</td>
     <td align="center"></td>
   </tr>
   <tr>
     <td align="center" rowspan="2">BR-RTR</td>
-    <td align="center">int0</td>
-    <td align="center">172.16.5.2</td>
+    <td align="center">te0</td>
+    <td align="center">172.16.50.2</td>
     <td align="center">/28</td>
-    <td align="center">172.16.5.1</td>
+    <td align="center">172.16.50.1</td>
   </tr>
   <tr>
-    <td align="center">int1</td>
+    <td align="center">te1</td>
     <td align="center">192.168.0.1</td>
-    <td align="center">/27</td>
+    <td align="center">/28</td>
     <td align="center"></td>
   </tr>
   <tr>
     <td align="center">HQ-SRV</td>
-    <td align="center">ens33</td>
-    <td align="center">192.168.100.62</td>
-    <td align="center">/26</td>
-    <td align="center">192.168.100.1</td>
+    <td align="center">ens**</td>
+    <td align="center">192.168.15.2</td>
+    <td align="center">/27</td>
+    <td align="center">192.168.15.1</td>
   </tr>
   <tr>
     <td align="center">BR-SRV</td>
-    <td align="center">ens33</td>
-    <td align="center">192.168.0.30</td>
-    <td align="center">/27</td>
+    <td align="center">ens**</td>
+    <td align="center">192.168.0.2</td>
+    <td align="center">/28</td>
     <td align="center">192.168.0.1</td>
   </tr>
   <tr>
     <td align="center">HQ-CLI</td>
-    <td align="center">ens33</td>
-    <td align="center">192.168.200.14</td>
+    <td align="center">ens**</td>
+    <td align="center">DHCP</td>
     <td align="center">/28</td>
-    <td align="center">192.168.200.1</td>
+    <td align="center">192.168.25.1</td>
   </tr>
 </table>
 <p align="center"><strong>Таблица адресации</strong></p>
