@@ -121,7 +121,7 @@ NM_CONTROLLED=no
 BOOTPROTO=static
 CONFIG_IPv4=yes
 выйти и сохранить изменения в vim :wq
-cp /etc/net/ifaces/ens34/options /etc/net/ifaces/ens**
+cp /etc/net/ifaces/ens**/options /etc/net/ifaces/ens**
 ```
 Выдача IP
 ```
@@ -159,15 +159,15 @@ no boot a-image stable
 Создание интерфейса и назначение ему IP
 ```
 int TO-ISP
-ip address 172.16.4.2/28
+ip address 172.16.40.2/28
 no shutdown
 ex
 ip name-server "DNS от ISP который в /etc/resolv.conf"
 ```
 Привязка созданного интерфейса к порту
 ```
-port ge0
-service-instance ge0
+port te0
+service-instance te0
 encapsulation default
 ex
 service-instance SI-ISP
@@ -178,31 +178,31 @@ connect ip interface TO-ISP
 ```
 interface HQ-SRV
  ip mtu 1500
- ip address 192.168.0.1/26
+ ip address 192.168.15.1/27
 !
 interface HQ-CLI
  ip mtu 1500
- ip address 192.168.0.65/28
+ ip address 192.168.25.1/28
 !
 interface HQ-MGMT
  ip mtu 1500
- ip address 192.168.0.81/29
+ ip address 192.168.99.1/29
 !
 ```
 Создание для каждого VLAN своего service-instance
 ```
-port te0
+port te1
  mtu 9234
- service-instance te0/vlan100
-  encapsulation dot1q 100
+ service-instance te1/vlan15
+  encapsulation dot1q 15
   rewrite pop 1
   connect ip interface HQ-SRV
- service-instance te0/vlan200
-  encapsulation dot1q 200
+ service-instance te1/vlan25
+  encapsulation dot1q 25
   rewrite pop 1
   connect ip interface HQ-CLI
- service-instance te0/vlan999
-  encapsulation dot1q 999
+ service-instance te1/vlan99
+  encapsulation dot1q 99
   rewrite pop 1
   connect ip interface HQ-MGMT
 do wr
@@ -212,11 +212,11 @@ do wr
 interface tunnel.1
  ip mtu 1400
  ip address 172.16.1.1/30
- ip tunnel 172.16.4.2 172.16.5.2 mode gre
+ ip tunnel 172.16.40.2 172.16.50.2 mode gre
 ```
 Маршрут в сторону ISP
 ```
-ip route 0.0.0.0/0 172.16.4.1
+ip route 0.0.0.0/0 172.16.40.1
 do wr
 ```
 Проверка:
@@ -247,11 +247,11 @@ nameserver "DNS от ISP который в /etc/resolv.conf"
 ```
 Выдача IP
 ```
-echo 192.168.0.2/26 > /etc/net/ifaces/ens**/ipv4address
+echo 192.168.15.2/27 > /etc/net/ifaces/ens**/ipv4address
 ```
 Выдача шлюза
 ```
-echo default via 192.168.0.1 > /etc/net/ifaces/ens**/ipv4route
+echo default via 192.168.15.1 > /etc/net/ifaces/ens**/ipv4route
 ```
 включение forwarding, в строке net.ipv4.ip_forward поменять 0 на 1
 ```
@@ -262,7 +262,7 @@ vim /etc/net/sysctl.conf
 systemctl restart network
 ```
 #### BR-RTR
-Выбор заводской прошивки на роутере, чтоб работали порты
+Выбор заводской прошивки на роутере, чтоб работали порты (возможно это уже сделано)
 ```
 en
 no boot b-image active
@@ -279,22 +279,22 @@ no boot a-image stable
 Создание интерфейса и назначение ему IP
 ```
 int TE-ISP
-ip address 172.16.5.2/28
+ip address 172.16.50.2/28
 no shutdown
 int TO-BR
-ip address 192.168.1.1/27
+ip address 192.168.0.1/28
 no shutdown
 ip name-server "DNS от ISP который в /etc/resolv.conf"
 ```
 Привязка созданных интерфейсов к портам
 ```
-port ge0
-service-instance ge0
+port te0
+service-instance te0
 encapsulation default
 service-instance SE-ISP
 encapsulation untagged
 connect ip interface TE-ISP
-port te0
+port te1
 service-instance SI-BR
 encapsulation untagged
 connect ip interface TO-BR
@@ -304,11 +304,11 @@ connect ip interface TO-BR
 interface tunnel.1
  ip mtu 1400
  ip address 172.16.1.2/30
- ip tunnel 172.16.5.2 172.16.4.2 mode gre
+ ip tunnel 172.16.50.2 172.16.40.2 mode gre
 ```
 Маршрут в сторону ISP
 ```
-ip route 0.0.0.0/0 172.16.5.1
+ip route 0.0.0.0/0 172.16.50.1
 do wr
 ```
 #### BR-SRV
@@ -336,11 +336,11 @@ nameserver "DNS от ISP который в /etc/resolv.conf"
 ```
 Выдача IP
 ```
-echo 192.168.1.2/27 > /etc/net/ifaces/ens**/ipv4address
+echo 192.168.0.2/28 > /etc/net/ifaces/ens**/ipv4address
 ```
 Выдача шлюза
 ```
-echo default via 192.168.1.1 > /etc/net/ifaces/ens**/ipv4route
+echo default via 192.168.0.1 > /etc/net/ifaces/ens**/ipv4route
 ```
 включение forwarding, в строке net.ipv4.ip_forward поменять 0 на 1
 ```
@@ -357,8 +357,8 @@ systemctl restart network
 apt-get update
 apt-get install iptables
 вместо звездочек пишем интерфейс который выдает интернет
-iptables -t nat -A POSTROUTING -s 172.16.4.0/28 -o ens** -j MASQUERADE
-iptables -t nat -A POSTROUTING -s 172.16.5.0/28 -o ens** -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 172.16.40.0/28 -o ens** -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 172.16.50.0/28 -o ens** -j MASQUERADE
 iptables-save > /etc/sysconfig/iptables
 systemctl restart iptables
 vim /etc/crontab
@@ -379,7 +379,7 @@ int HQ-CLI
 int HQ-MGMT
  ip nat inside
 !
-ip nat pool NAT_POOL 192.168.0.1-192.168.0.254
+ip nat pool NAT_POOL 192.168.15.1-192.168.15.30,192.168.25.1-192.168.25.14
 !
 ip nat source dynamic inside-to-outside pool NAT_POOL overload interface TO-ISP
 do wr
@@ -392,9 +392,9 @@ int TE-ISP
 int TO-BR
  ip nat inside
 !
-ip nat pool LOCAL_NET 192.168.1.1-192.168.1.30
+ip nat pool NAT_POOL 192.168.0.1-192.168.0.14
 !
-ip nat source dynamic inside-to-outside pool LOCAL_NET overload interface TE-ISP
+ip nat source dynamic inside-to-outside pool NAT_POOL overload interface TE-ISP
 do wr
 ```
 Проверка, должен пинговаться DNS от ISP:
@@ -405,9 +405,10 @@ do ping 'DNS от ISP'
 ### 3 Создание локальных учетных записей
 #### HQ-SRV и BR-SRV
 ```
-useradd -m -u 1015 sshuser
+useradd -u 1010 sshuser
 passwd sshuser
-vim /etc/sudoers.d/sshuser
+usermod -aG wheel sshuser
+vim /etc/sudoers.d/sshuser или /etc/sudoers
 sshuser ALL=(ALL) NOPASSWD:ALL
 ```
 Проверка
@@ -434,8 +435,9 @@ vim /etc/openssh/sshd_config
 ```
 Изменяем следующие параметры, раскомменчиваем, если параметр не находится то добавляем
 ```
-Port 2024
+Port 3010
 MaxAuthTries 2
+PasswordAuthentication yes
 Banner /etc/openssh/banner
 AllowUsers sshuser
 ```
@@ -444,8 +446,6 @@ AllowUsers sshuser
 vim /etc/openssh/banner
 ```
 ```
-WARNING!!!!
-
 AUTHORIZED ACCESS ONLY!!!!
 ```
 Перезагружаем SSH
