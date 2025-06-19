@@ -486,7 +486,7 @@ do sh ip route
 ```
 ### 6 Настройка DHCP на HQ-RTR
 ```
-ip pool HQ-NET25 192.168.25.13-192.168.25.14
+ip pool HQ-NET25 192.168.25.14-192.168.25.14
 !
 dhcp-server 1
  lease 86400
@@ -523,18 +523,13 @@ apt-get install -y bind bind-utils
 
 Изменяем содержание перечисленных строк в **`/etc/bind/options.conf`** к следующему виду:
 ```yml
-listen-on { 127.0.0.1; 192.168.100.62; };
+listen-on { 127.0.0.1; 192.168.15.2; };
 
-forwarders { 77.88.8.8; };
+forwarders { DNS от ISP ; };
 
-allow-query { 192.168.100.0/26; 192.168.200.0/28; 192.168.0.0/27; };
+allow-query { 192.168.15.0/27; 192.168.25.0/28; 192.168.0.0/28; };
 
 ```
-> **`listen-on`** - сетевые интерфейсы, которые будет прослушивать служба
->
-> **`forwarders`** - DNS-сервер, на который будут перенаправляться запросы клиентов
->
-> **`allow-query`** - IP-адреса и подсети от которых будут обрабатываться запросы
 
 <br/>
 
@@ -552,13 +547,12 @@ systemctl enable --now bind
 
 <br/>
 
-Изменяем **`resolv.conf`** интерфейса:
+Изменяем **`resolv.conf`** интерфейса либо общий **`resolv.conf`**:
 ```yml
 search au-team.irpo
 nameserver 127.0.0.1
-nameserver 192.168.100.62
-nameserver 77.88.8.8
-search yandex.ru
+nameserver 192.168.15.2
+nameserver DNS от ISP
 ```
 
 <br/>
@@ -601,12 +595,12 @@ $TTL    1D
                                 1H              ; ncache
                         )
         IN      NS      au-team.irpo.
-        IN      A       192.168.100.62
-hq-rtr  IN      A       192.168.100.1
+        IN      A       192.168.15.2
+hq-rtr  IN      A       192.168.15.1
 br-rtr  IN      A       192.168.0.1
-hq-srv  IN      A       192.168.100.62
-hq-cli  IN      A       192.168.200.14
-br-srv  IN      A       192.168.0.30
+hq-srv  IN      A       192.168.15.2
+hq-cli  IN      A       192.168.25.14
+br-srv  IN      A       192.168.0.2
 moodle  IN      CNAME   hq-rtr
 wiki    IN      CNAME   hq-rtr
 ```
@@ -624,14 +618,14 @@ named-checkconf -z
 
 Прописываем их в **`/etc/bind/local.conf`**:
 ```yml
-zone "100.168.192.in-addr.arpa" {
+zone "15.168.192.in-addr.arpa" {
   type master;
-  file "100.168.192.in-addr.arpa";
+  file "15.168.192.in-addr.arpa";
 };
 
-zone "200.168.192.in-addr.arpa" {
+zone "25.168.192.in-addr.arpa" {
   type master;
-  file "200.168.192.in-addr.arpa";
+  file "25.168.192.in-addr.arpa";
 };
 
 zone "0.168.192.in-addr.arpa" {
@@ -644,8 +638,8 @@ zone "0.168.192.in-addr.arpa" {
 
 Копируем шаблон обратной зоны:
 ```yml
-cp /etc/bind/zone/127.in-addr.arpa /etc/bind/zone/100.168.192.in-addr.arpa
-cp /etc/bind/zone/127.in-addr.arpa /etc/bind/zone/200.168.192.in-addr.arpa
+cp /etc/bind/zone/127.in-addr.arpa /etc/bind/zone/15.168.192.in-addr.arpa
+cp /etc/bind/zone/127.in-addr.arpa /etc/bind/zone/25.168.192.in-addr.arpa
 cp /etc/bind/zone/127.in-addr.arpa /etc/bind/zone/0.168.192.in-addr.arpa
 ```
 
@@ -653,17 +647,17 @@ cp /etc/bind/zone/127.in-addr.arpa /etc/bind/zone/0.168.192.in-addr.arpa
 
 Задаем пользователя и права на файл:
 ```yml
-chown named. /etc/bind/zone/100.168.192.in-addr.arpa
-chmod 600 /etc/bind/zone/100.168.192.in-addr.arpa
-chown named. /etc/bind/zone/200.168.192.in-addr.arpa
-chmod 600 /etc/bind/zone/200.168.192.in-addr.arpa
+chown named. /etc/bind/zone/15.168.192.in-addr.arpa
+chmod 600 /etc/bind/zone/15.168.192.in-addr.arpa
+chown named. /etc/bind/zone/25.168.192.in-addr.arpa
+chmod 600 /etc/bind/zone/25.168.192.in-addr.arpa
 chown named. /etc/bind/zone/0.168.192.in-addr.arpa
 chmod 600 /etc/bind/zone/0.168.192.in-addr.arpa
 ```
 
 <br/>
 
-Приводим их к следующему виду:
+Приводим файлы которым давали права к следующему виду:
 ```yml
 $TTL    1D
 @       IN      SOA     au-team.irpo. root.au-team.irpo. (
@@ -675,7 +669,7 @@ $TTL    1D
                         )
         IN      NS      au-team.irpo.
 1       IN      PTR     hq-rtr.au-team.irpo.
-62      IN      PTR     hq-srv.au-team.irpo.
+2       IN      PTR     hq-srv.au-team.irpo.
 ```
 ```yml
 $TTL    1D
@@ -700,7 +694,7 @@ $TTL    1D
                         )
         IN      NS      au-team.irpo.
 1      IN      PTR      br-rtr.au-team.irpo.
-30     IN      PTR      br-srv.au-team.irpo.
+2      IN      PTR      br-srv.au-team.irpo.
 ```
 
 <br/>
