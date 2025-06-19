@@ -125,6 +125,7 @@
   </tr>
 </table>
 <p align="center"><strong>Таблица адресации</strong></p>
+
 ### Выдача имени устройству:
 ```
 ISP - hostnamectl set-hostname ISP; exec bash
