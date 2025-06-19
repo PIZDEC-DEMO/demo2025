@@ -509,10 +509,224 @@ do wr
 <img src="8.png" width="500">
 Если сработало то в ip -c a будет так
 <img src="9.png" width="500">
-### 7 Настройка DNS с помощью dnsmasq на HQ-SRV
 
-#### Устанавливаем dnsmasq:
-выключение bind:
+### 7 Настройка DNS с помощью bind на HQ-SRV
+
+#### Настройка bind:
+
+Устанавливаем необходимые пакеты:
+```yml
+apt-get install -y bind bind-utils
+```
+
+<br/>
+
+Изменяем содержание перечисленных строк в **`/etc/bind/options.conf`** к следующему виду:
+```yml
+listen-on { 127.0.0.1; 192.168.100.62; };
+
+forwarders { 77.88.8.8; };
+
+allow-query { 192.168.100.0/26; 192.168.200.0/28; 192.168.0.0/27; };
+
+```
+> **`listen-on`** - сетевые интерфейсы, которые будет прослушивать служба
+>
+> **`forwarders`** - DNS-сервер, на который будут перенаправляться запросы клиентов
+>
+> **`allow-query`** - IP-адреса и подсети от которых будут обрабатываться запросы
+
+<br/>
+
+Проверяем на ошибки:
+```yml
+named-checkconf
+```
+
+<br/>
+
+Запускаем и добавляем в автозагрузку **`bind`**:
+```yml
+systemctl enable --now bind
+```
+
+<br/>
+
+Изменяем **`resolv.conf`** интерфейса:
+```yml
+search au-team.irpo
+nameserver 127.0.0.1
+nameserver 192.168.100.62
+nameserver 77.88.8.8
+search yandex.ru
+```
+
+<br/>
+
+#### Создание и настройка прямой зоны
+
+Прописываем ее в **`/etc/bind/local.conf`**:
+```yml
+zone "au-team.irpo" {
+  type master;
+  file "au-team.irpo.db";
+};
+```
+
+<br/>
+
+Копируем шаблон прямой зоны:
+```yml
+cp /etc/bind/zone/localdomain /etc/bind/zone/au-team.irpo.db
+```
+
+<br/>
+
+Задаем пользователя и права на файл:
+```yml
+chown named. /etc/bind/zone/au-team.irpo.db
+chmod 600 /etc/bind/zone/au-team.irpo.db
+```
+
+<br/>
+
+Приводим его к следующему виду:
+```yml
+$TTL    1D
+@       IN      SOA     au-team.irpo. root.au-team.irpo. (
+                                2024102200      ; serial
+                                12H             ; refresh
+                                1H              ; retry
+                                1W              ; expire
+                                1H              ; ncache
+                        )
+        IN      NS      au-team.irpo.
+        IN      A       192.168.100.62
+hq-rtr  IN      A       192.168.100.1
+br-rtr  IN      A       192.168.0.1
+hq-srv  IN      A       192.168.100.62
+hq-cli  IN      A       192.168.200.14
+br-srv  IN      A       192.168.0.30
+moodle  IN      CNAME   hq-rtr
+wiki    IN      CNAME   hq-rtr
+```
+
+<br/>
+
+Проверяем на ошибки:
+```yml
+named-checkconf -z
+```
+
+<br/>
+
+#### Создание и настройка обратных зон
+
+Прописываем их в **`/etc/bind/local.conf`**:
+```yml
+zone "100.168.192.in-addr.arpa" {
+  type master;
+  file "100.168.192.in-addr.arpa";
+};
+
+zone "200.168.192.in-addr.arpa" {
+  type master;
+  file "200.168.192.in-addr.arpa";
+};
+
+zone "0.168.192.in-addr.arpa" {
+  type master;
+  file "0.168.192.in-addr.arpa";
+};
+```
+
+<br/>
+
+Копируем шаблон обратной зоны:
+```yml
+cp /etc/bind/zone/127.in-addr.arpa /etc/bind/zone/100.168.192.in-addr.arpa
+cp /etc/bind/zone/127.in-addr.arpa /etc/bind/zone/200.168.192.in-addr.arpa
+cp /etc/bind/zone/127.in-addr.arpa /etc/bind/zone/0.168.192.in-addr.arpa
+```
+
+<br/>
+
+Задаем пользователя и права на файл:
+```yml
+chown named. /etc/bind/zone/100.168.192.in-addr.arpa
+chmod 600 /etc/bind/zone/100.168.192.in-addr.arpa
+chown named. /etc/bind/zone/200.168.192.in-addr.arpa
+chmod 600 /etc/bind/zone/200.168.192.in-addr.arpa
+chown named. /etc/bind/zone/0.168.192.in-addr.arpa
+chmod 600 /etc/bind/zone/0.168.192.in-addr.arpa
+```
+
+<br/>
+
+Приводим их к следующему виду:
+```yml
+$TTL    1D
+@       IN      SOA     au-team.irpo. root.au-team.irpo. (
+                                2024102200      ; serial
+                                12H             ; refresh
+                                1H              ; retry
+                                1W              ; expire
+                                1H              ; ncache
+                        )
+        IN      NS      au-team.irpo.
+1       IN      PTR     hq-rtr.au-team.irpo.
+62      IN      PTR     hq-srv.au-team.irpo.
+```
+```yml
+$TTL    1D
+@       IN      SOA     au-team.irpo. root.au-team.irpo. (
+                                2024102200      ; serial
+                                12H             ; refresh
+                                1H              ; retry
+                                1W              ; expire
+                                1H              ; ncache
+                        )
+        IN      NS      au-team.irpo.
+14      IN      PTR     hq-cli.au-team.irpo.
+```
+```yml
+$TTL    1D
+@       IN      SOA     au-team.irpo. root.au-team.irpo. (
+                                2024102200      ; serial
+                                12H             ; refresh
+                                1H              ; retry
+                                1W              ; expire
+                                1H              ; ncache
+                        )
+        IN      NS      au-team.irpo.
+1      IN      PTR      br-rtr.au-team.irpo.
+30     IN      PTR      br-srv.au-team.irpo.
+```
+
+<br/>
+
+Проверяем на ошибки:
+```yml
+named-checkconf -z
+```
+
+<br/>
+
+Перезапускаем **`bind`**:
+```yml
+systemctl restart bind
+```
+
+<br/>
+
+Проверяем работоспособность:
+```yml
+nslookup **IP-адрес/DNS-имя**
+```
+
+</details>
+
+<br/>
 
 ### 8 Настройка часового пояса
 #### HQ-SRV, HQ-CLI, BR-SRV
