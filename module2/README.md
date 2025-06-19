@@ -1,1 +1,1 @@
-
+Короче мне лень второй модуль писать так что вот: https://vk.com/away.php?to=https%3A%2F%2Fdocs.google.com%2Fdocument%2Fd%2F1gw-aewMqPLfv1nFOYQZU4Svufjf3aajY%2Fmobilebasic%23heading%3Dh.ceqh8ghhevp0&utf=1
