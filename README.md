@@ -457,7 +457,8 @@ systemctl restart sshd
 ```
 router ospf 1
  network 172.16.1.0/30 area 0
- network 192.168.0.0/28 area 0
+ network 192.168.15.0/27 area 0
+ network 192.168.25.0/28 area 0
 !
 interface tunnel.1
  ip ospf authentication message-digest
@@ -469,7 +470,7 @@ do wr
 ```
 router ospf 1
  network 172.16.1.0/30 area 0
- network 192.168.1.0/27 area 0
+ network 192.168.0.0/28 area 0
 !
 interface tunnel.1
  ip ospf authentication message-digest
@@ -485,15 +486,15 @@ do sh ip route
 ```
 ### 6 Настройка DHCP на HQ-RTR
 ```
-ip pool HQ-NET200 192.168.0.66-192.168.0.70
+ip pool HQ-NET25 192.168.25.13-192.168.25.14
 !
 dhcp-server 1
  lease 86400
- mask 255.255.255.0
- pool HQ-NET200 1
-  dns 192.168.0.2
+ mask 255.255.255.240
+ pool HQ-NET25 1
+  dns 192.168.15.2
   domain-name au-team.irpo
-  gateway 192.168.0.65
+  gateway 192.168.25.1
   mask 255.255.255.240
 !
 interface HQ-CLI
@@ -512,47 +513,7 @@ do wr
 
 #### Устанавливаем dnsmasq:
 выключение bind:
-```
-systemctl disable --now bind
-```
 
-```
-apt-get update
-apt-get install dnsmasq
-```
-включение и добавление в автозапуск dnsmasq:
-```
-systemctl enable --now dnsmasq
-```
-Редактируем конфиг:
-
-```
-vim /etc/dnsmasq.conf
-```
-
-Добавляем следующие параметры сразу с первой строки
-<img src="10.png" width='500'>
-```
-Добавляем следующую строку в /etc/hosts после предыдущих записей:
-vim /etc/hosts
-192.168.0.1   hq-rtr.au-team.irpo
-```
-HQ-CLI
-```
-Добавляем следующую строку в /etc/hosts после предыдущих записей:
-vim /etc/hosts
-192.168.0.67   hq-cli.au-team.irpo
-```
-BR-SRV
-```
-Добавляем следующую строку в /etc/hosts после предыдущих записей:
-vim /etc/hosts
-192.168.1.2   br-srv.au-team.irpo
-```
-Перезагружаем dnsmasq
-```
-systemctl restart dnsmasq
-```
 ### 8 Настройка часового пояса
 #### HQ-SRV, HQ-CLI, BR-SRV
 
